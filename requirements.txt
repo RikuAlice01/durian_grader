@@ -1,0 +1,8 @@
+customtkinter
+opencv-python 
+matplotlib 
+torch 
+torchvision 
+torchaudio 
+ultralytics
+tkinterdnd2
