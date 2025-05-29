@@ -1,19 +1,18 @@
 import customtkinter as ctk
 from customtkinter import CTkImage, CTkFont
 import tkinterdnd2
-from tkinterdnd2 import TkinterDnD, DND_FILES  # Ensure DND_FILES is imported correctly
-from tkinter import filedialog, PhotoImage
+from tkinterdnd2 import  DND_FILES  # Ensure DND_FILES is imported correctly
+from tkinter import filedialog
 import cv2
 from PIL import Image, ImageOps, ImageFilter
 import numpy as np
 import os
 from datetime import datetime
-import tkinter as tk
 
-from durian_grader import process_image  # ใช้จากโค้ดที่คุณเขียนไว้เดิมใน durian_grader.py
+from utils.durian_grader import process_image
 
 # ตั้งค่าธีมสีและรูปแบบ
-ctk.set_appearance_mode("System")  # "System", "Dark" หรือ "Light"
+ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")  # เปลี่ยนธีมเป็นสีเขียวให้เข้ากับทุเรียน
 
 class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):  # Change base class to TkinterDnD.Tk

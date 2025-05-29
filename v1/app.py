@@ -5,10 +5,7 @@ from tkinterdnd2 import TkinterDnD
 from tkinter import filedialog
 import cv2
 from PIL import Image
-import numpy as np
-import os
 from datetime import datetime
-import tkinter as tk
 import pathlib
 
 from utils.durian_grader import process_multi_view
@@ -35,7 +32,7 @@ class DurianGraderApp(TkinterDnD.Tk):
         self.camera_manager.initialize_cameras()
         self.frames = [None] * 6
         self.loaded_images = {}
-        self.analysis_results = [None] * 6  # เก็บภาพหลังวิเคราะห์สำหรับแต่ละ view
+        self.analysis_results = [None] * 6  #เก็บภาพหลังวิเคราะห์สำหรับแต่ละ view
 
         # --- Main container ---
         self.main_frame = ctk.CTkFrame(self, corner_radius=15, border_width=2, border_color="#4CAF50")
@@ -143,7 +140,7 @@ class DurianGraderApp(TkinterDnD.Tk):
         # รอให้ label ได้ขนาดจริงก่อน
         label.update_idletasks()
 
-        max_width = label.winfo_width() - 20  # เว้น margin ซักหน่อย
+        max_width = label.winfo_width() - 20
         max_height = label.winfo_height() - 20
 
         # ป้องกันกรณี max_width/height <= 0
