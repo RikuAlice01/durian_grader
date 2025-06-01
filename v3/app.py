@@ -11,6 +11,7 @@ import threading
 import time
 from datetime import datetime
 
+from utils.config_loader import load_config, save_config
 from utils.durian_grader import process_image
 
 # ตั้งค่าธีมสีและรูปแบบ
@@ -279,45 +280,58 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
         self.result_text.configure(state="disabled")
 
     def show_config_dialog(self):
-        """แสดงหน้าต่างตั้งค่าการแสดงผล"""
+        config = load_config()
+
         config_window = ctk.CTkToplevel(self)
         config_window.title("ตั้งค่าการแสดงผล")
-        config_window.geometry("400x300")
+        config_window.geometry("450x450")
         config_window.transient(self)
         config_window.grab_set()
+
+        entries = {}
+
+        def add_config_entry(section, key, label_text, row, col, widget_type="entry", options=None):
+            ctk.CTkLabel(config_window, text=label_text).grid(row=row*2, column=col, sticky="w", padx=10, pady=(10, 0))
+            
+            var = ctk.StringVar(value=config[section][key] if section in config and key in config[section] else "")
+            
+            if widget_type == "combo" and options is not None:
+                widget = ctk.CTkComboBox(config_window, values=options, variable=var)
+                widget.grid(row=row*2+1, column=col, sticky="we", padx=10, pady=(0, 10))
+            else:
+                widget = ctk.CTkEntry(config_window, textvariable=var, width=80)
+                widget.grid(row=row*2+1, column=col, sticky="we", padx=10, pady=(0, 10))
+            
+            entries[(section, key)] = var
+
+        # ซ้ายคอลัมน์ (col=0)
+        add_config_entry("Rendering", "line_thickness", "ความหนาเส้นขอบ (line_thickness):", row=0, col=0)
+        add_config_entry("Rendering", "text_size", "ขนาดตัวอักษร (text_size):", row=1, col=0)
+        add_config_entry("Rendering", "text_bold", "ความหนาอักษร (text_bold):", row=2, col=0)
+
+        # ขวาคอลัมน์ (col=1)
+        add_config_entry("Rendering", "point_size", "ขนาดจุด (point_size):", row=0, col=1)
+        add_config_entry("Grading", "distance_threshold", "ค่าเกณฑ์ระยะห่าง (distance_threshold):", row=1, col=1)
+        add_config_entry("Grading", "adj", "ค่าความลึกการตรวจ (adj):", row=2, col=1)
+
+        add_config_entry("Camera", "fps", "FPS กล้อง:", row=3, col=0, widget_type="combo", options=["15", "24", "30", "60"])
         
-        # จำนวนคอลัมน์
-        ctk.CTkLabel(config_window, text="จำนวนคอลัมน์:", font=self.text_font).pack(pady=10)
-        columns_var = ctk.StringVar(value=str(self.content_columns))
-        columns_combo = ctk.CTkComboBox(config_window, values=["1", "2"], variable=columns_var)
-        columns_combo.pack(pady=5)
-        
-        # แสดงแผงผลลัพธ์หรือไม่
-        result_panel_var = ctk.BooleanVar(value=self.show_result_panel)
-        result_panel_check = ctk.CTkCheckBox(
-            config_window, 
-            text="แสดงแผงผลการวิเคราะห์", 
-            variable=result_panel_var
-        )
-        result_panel_check.pack(pady=10)
-        
-        # FPS setting
-        ctk.CTkLabel(config_window, text="FPS กล้อง:", font=self.text_font).pack(pady=(20,5))
-        fps_var = ctk.StringVar(value=str(self.fps))
-        fps_combo = ctk.CTkComboBox(config_window, values=["15", "24", "30", "60"], variable=fps_var)
-        fps_combo.pack(pady=5)
-        
-        # ปุ่มตกลง
+        # ปุ่มตกลง แบบเต็มแถว
         def apply_config():
-            self.content_columns = int(columns_var.get())
-            self.show_result_panel = result_panel_var.get()
-            self.fps = int(fps_var.get())
+            for (section, key), var in entries.items():
+                config[section][key] = var.get()
+            save_config(config)
+
+            self.fps = int(config['Camera']['fps'])
             self.frame_interval = 1.0 / self.fps
-            self.configure_content_frame(self.content_columns, self.show_result_panel)
+
             config_window.destroy()
-        
-        apply_btn = ctk.CTkButton(config_window, text="ตกลง", command=apply_config)
-        apply_btn.pack(pady=20)
+
+        ctk.CTkButton(config_window, text="ตกลง", command=apply_config).grid(row=10, column=0, columnspan=2, pady=20, padx=10, sticky="we")
+
+        # กำหนดคอลัมน์ให้ขยายได้
+        config_window.grid_columnconfigure(0, weight=1)
+        config_window.grid_columnconfigure(1, weight=1)
 
     def on_camera_select(self, selection):
         """เมื่อเลือกกล้องใหม่"""
@@ -411,7 +425,7 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
                     self._analyze_camera_frame(frame_rgb.copy())
                 
                 # แสดงเฟรม
-                self.after(0, lambda f=frame_rgb: self._update_camera_display(f))
+                # self.after(0, lambda f=frame_rgb: self._update_camera_display(f))
                 
                 # รอตามค่า FPS ที่กำหนด
                 time.sleep(self.frame_interval)
@@ -443,6 +457,9 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
                 
                 # วิเคราะห์
                 img_result, text_result = process_image(temp_path)
+
+                if img_result is not None:
+                    self.show_image(img_result)
                 
                 # อัพเดต UI ใน main thread
                 self.after(0, lambda: self._update_realtime_result(text_result))

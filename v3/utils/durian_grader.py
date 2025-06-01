@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import cv2
 import torch
 import numpy as np
+from utils.config_loader import load_config
 
 # ตรวจสอบว่าใช้ GPU ได้หรือไม่
 print("Using CUDA:", torch.cuda.is_available())
@@ -11,10 +12,16 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = YOLO('yolo11n-seg.pt')
 model.to(device)
 
-line_thickness = 10
-text_size = 3
-text_bold = 5
-point_size = 15
+# โหลดการตั้งค่าจากไฟล์ config
+cfg = load_config()
+
+line_thickness = int(cfg['Rendering']['line_thickness'])
+text_size = int(cfg['Rendering']['text_size'])
+text_bold = int(cfg['Rendering']['text_bold'])
+point_size = int(cfg['Rendering']['point_size'])
+
+DISTANCE_THRESHOLD = int(cfg['Grading']['distance_threshold'])
+ADJ = int(cfg['Grading']['adj'])
 
 # ค่าเกณฑ์สำหรับการให้เกรด
 DISTANCE_THRESHOLD = 130  # สามารถปรับค่าได้
