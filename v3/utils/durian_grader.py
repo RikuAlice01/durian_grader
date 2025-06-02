@@ -12,21 +12,22 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = YOLO('yolo11n-seg.pt')
 model.to(device)
 
-# โหลดการตั้งค่าจากไฟล์ config
-cfg = load_config()
-
-line_thickness = int(cfg['Rendering']['line_thickness'])
-text_size = int(cfg['Rendering']['text_size'])
-text_bold = int(cfg['Rendering']['text_bold'])
-point_size = int(cfg['Rendering']['point_size'])
-
-DISTANCE_THRESHOLD = int(cfg['Grading']['distance_threshold'])
-ADJ = int(cfg['Grading']['adj'])
-
-# ค่าเกณฑ์สำหรับการให้เกรด
-DISTANCE_THRESHOLD = 130  # สามารถปรับค่าได้
+line_thickness = 2
+text_size = 0.5
+text_bold = 1
+point_size = 5
+DISTANCE_THRESHOLD = 3
 ADJ = 10
 
+def loader_config():
+    global line_thickness, text_size, text_bold, point_size, DISTANCE_THRESHOLD, ADJ
+    cfg = load_config()
+    line_thickness = int(cfg['Rendering']['line_thickness'])
+    text_size = float(cfg['Rendering']['text_size'])
+    text_bold = int(cfg['Rendering']['text_bold'])
+    point_size = int(cfg['Rendering']['point_size'])
+    DISTANCE_THRESHOLD = int(cfg['Grading']['distance_threshold'])
+    ADJ = int(cfg['Grading']['adj'])
 
 def calculate_grade_by_distance(segment_info):
     """
@@ -57,7 +58,7 @@ def calculate_grade_by_distance(segment_info):
         return "AB", segment_info
 
 def draw_results(image, mask, bounding_box):
-
+    global line_thickness, text_size, text_bold, point_size, DISTANCE_THRESHOLD, ADJ
     # กำหนดค่าเริ่มต้นสำหรับ segment_info
     # blue_pt durain middle point
     # red_pt durain average point
@@ -155,6 +156,7 @@ def draw_results(image, mask, bounding_box):
     return image_with_alpha, segment_info, grade
 
 def process_image(image_path):
+    loader_config()
     image = cv2.imread(image_path)
     if image is None:
         return None, "Error: Cannot load image."
