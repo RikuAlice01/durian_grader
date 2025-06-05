@@ -499,7 +499,12 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
                 if len(lines) > 200:  # จำกัดจำนวนบรรทัด
                     self.result_text.delete("1.0", "end")
                 
-                self.result_text.insert("1.0", formatted_result)
+                # เพิ่มผลลัพธ์ใหม่ไปที่ด้านล่าง
+                self.result_text.insert("end", formatted_result)
+                
+                # Scroll ไปที่ด้านล่างสุดเพื่อแสดงข้อมูลล่าสุด
+                self.result_text.see("end")
+                
                 self.result_text.configure(state="normal")
                 
                 # เปิดใช้งานปุ่มบันทึก
