@@ -286,7 +286,9 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
         config_window.title("ตั้งค่าการแสดงผล")
         config_window.geometry("450x450")
         config_window.transient(self)
-        config_window.grab_set()
+        
+        # Wait for the window to be visible before grabbing focus
+        config_window.after(10, lambda: config_window.grab_set())
 
         entries = {}
 
