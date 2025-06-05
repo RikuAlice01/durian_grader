@@ -52,7 +52,7 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
         self.camera = None
         self.camera_active = False
         self.camera_thread = None
-        loader_config()
+        self.loader_config()
         self.frame_interval = 1.0 / self.fps
         self.last_analysis_time = 0
         self.available_cameras = []
