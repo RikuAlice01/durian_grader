@@ -19,14 +19,9 @@ def load_config():
                 "adj = 10\n\n"
                 "[Camera]\n"
                 "fps = 30\n"
+                "analysis_interval = 0.1\n"
             )
     config.read(CONFIG_FILE)
-    # กรณี config ไม่มี section หรือ key ที่ต้องการ ให้เติมค่า default
-    if 'Camera' not in config:
-        config['Camera'] = {}
-    if 'fps' not in config['Camera']:
-        config['Camera']['fps'] = '30'
-    return config
 
 def save_config(config):
     with open(CONFIG_FILE, 'w') as configfile:

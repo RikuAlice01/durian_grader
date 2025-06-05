@@ -19,6 +19,13 @@ ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")
 
 class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
+    
+    def loader_config(self):
+        cfg = load_config()
+        self.fps = int(cfg['Camera']['fps'])
+        self.analysis_interval = float(cfg['Camera'].get('analysis_interval', 0.1))
+        self.version = cfg.get('App', 'version', '0.0.1')
+    
     def __init__(self):
         super().__init__()
         
@@ -45,10 +52,9 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
         self.camera = None
         self.camera_active = False
         self.camera_thread = None
-        self.fps = 24
+        loader_config()
         self.frame_interval = 1.0 / self.fps
         self.last_analysis_time = 0
-        self.analysis_interval = 1.0  # วิเคราะห์ทุก 1 วินาที
         self.available_cameras = []
         self.selected_camera_idx = 0
         
@@ -268,7 +274,7 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
         
         # Textbox สำหรับแสดงผลลัพธ์ข้อความ
         self.result_text = ctk.CTkTextbox(
-            self.result_frame, 
+            self.result_frame,
             font=self.result_font, 
             corner_radius=5,
             wrap="word"
@@ -317,6 +323,7 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
         add_config_entry("Grading", "adj", "ค่าความลึกการตรวจ (adj):", row=2, col=1)
 
         add_config_entry("Camera", "fps", "FPS กล้อง:", row=3, col=0, widget_type="combo", options=["15", "24", "30", "60"])
+        add_config_entry("Camera", "analysis_interval", "ช่วงเวลาการวิเคราะห์:", row=3, col=1)
         
         # ปุ่มตกลง แบบเต็มแถว
         def apply_config():
@@ -325,8 +332,8 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
             save_config(config)
 
             self.fps = int(config['Camera']['fps'])
+            self.analysis_interval = float(config['Camera'].get('analysis_interval', 0.1))
             self.frame_interval = 1.0 / self.fps
-
             config_window.destroy()
 
         ctk.CTkButton(config_window, text="ตกลง", command=apply_config).grid(row=10, column=0, columnspan=2, pady=20, padx=10, sticky="we")
