@@ -18,10 +18,11 @@ def load_config():
                 "distance_threshold = 130\n"
                 "adj = 10\n\n"
                 "[Camera]\n"
-                "fps = 30\n"
+                "fps = 24\n"
                 "analysis_interval = 0.1\n"
             )
     config.read(CONFIG_FILE)
+    return config
 
 def save_config(config):
     with open(CONFIG_FILE, 'w') as configfile:

@@ -22,9 +22,10 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
     
     def loader_config(self):
         cfg = load_config()
-        self.fps = int(cfg['Camera']['fps'])
+        print("Configuration loaded:", cfg)
+        self.fps = int(cfg['Camera'].get('fps', 24))
         self.analysis_interval = float(cfg['Camera'].get('analysis_interval', 0.1))
-        self.version = cfg.get('App', 'version', '0.0.1')
+        self.version = cfg.get('App', 'version', fallback='0.0.1')
     
     def __init__(self):
         super().__init__()
