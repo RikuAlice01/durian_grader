@@ -668,6 +668,8 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
                 
                 if img_result is not None:
                     self.show_image(img_result)
+                else:
+                    self.show_image(self.image_path)
                 
                 if hasattr(self, 'result_text') and self.show_result_panel:
                     self.result_text.configure(state="normal")
