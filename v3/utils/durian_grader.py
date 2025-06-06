@@ -191,6 +191,6 @@ def process_image(image_path):
             })
 
     if not all_results:
-        return None, "No durians detected."
+        return image, "No durians detected."
 
     return all_results[0]['image'], all_results[0]['text']
