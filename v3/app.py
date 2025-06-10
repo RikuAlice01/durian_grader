@@ -153,16 +153,17 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
             self.camera_combo.set(camera_options[0] if camera_options else "ไม่มีกล้อง")
         
         # ปุ่มเปิด/ปิดกล้อง
-        self.camera_btn = ctk.CTkButton(
-            self.btn_frame, 
-            text="📹 เปิดกล้อง", 
-            command=self.toggle_camera,
-            font=self.button_font,
-            height=40,
-            fg_color=self.secondary_color,
-            hover_color=self.primary_color
-        )
-        self.camera_btn.pack(side="left", padx=10, pady=10)
+        if self.available_cameras:
+            self.camera_btn = ctk.CTkButton(
+                self.btn_frame, 
+                text="📹 เปิดกล้อง", 
+                command=self.toggle_camera,
+                font=self.button_font,
+                height=40,
+                fg_color=self.secondary_color,
+                hover_color=self.primary_color
+            )
+            self.camera_btn.pack(side="left", padx=10, pady=10)
         
         # ปุ่มตั้งค่าการแสดงผล
         self.config_btn = ctk.CTkButton(
@@ -315,16 +316,18 @@ class DurianGraderApp(tkinterdnd2.TkinterDnD.Tk):
 
         # ซ้ายคอลัมน์ (col=0)
         add_config_entry("Rendering", "line_thickness", "ความหนาเส้นขอบ (line_thickness):", row=0, col=0)
-        add_config_entry("Rendering", "text_size", "ขนาดตัวอักษร (text_size):", row=1, col=0)
-        add_config_entry("Rendering", "text_bold", "ความหนาอักษร (text_bold):", row=2, col=0)
+        add_config_entry("Rendering", "text_size", "ขนาดตัวอักษร (text_size):", row=0, col=1)
+        add_config_entry("Rendering", "text_bold", "ความหนาอักษร (text_bold):", row=1, col=0)
+        add_config_entry("Rendering", "point_size", "ขนาดจุด (point_size):", row=1, col=1)
 
         # ขวาคอลัมน์ (col=1)
-        add_config_entry("Rendering", "point_size", "ขนาดจุด (point_size):", row=0, col=1)
-        add_config_entry("Grading", "distance_threshold", "ค่าเกณฑ์ระยะห่าง (distance_threshold):", row=1, col=1)
-        add_config_entry("Grading", "adj", "ค่าความลึกการตรวจ (adj):", row=2, col=1)
+        add_config_entry("Grading", "distance_threshold", "ค่าเกณฑ์ระยะห่าง (distance_threshold):", row=2, col=0)
+        add_config_entry("Grading", "percentage_grading", "ค่าเกณฑ์เปอร์เซ็นต์ (%):", row=2, col=1)
+        add_config_entry("Grading", "adj", "ค่าความลึกการตรวจ (adj):", row=3, col=0)
 
-        add_config_entry("Camera", "fps", "FPS กล้อง:", row=3, col=0, widget_type="combo", options=["15", "24", "30", "60"])
-        add_config_entry("Camera", "analysis_interval", "ช่วงเวลาการวิเคราะห์:", row=3, col=1)
+        # กล้อง
+        add_config_entry("Camera", "fps", "FPS กล้อง:", row=4, col=0, widget_type="combo", options=["15", "24", "30", "60"])
+        add_config_entry("Camera", "analysis_interval", "ช่วงเวลาการวิเคราะห์:", row=4, col=1)
         
         # ปุ่มตกลง แบบเต็มแถว
         def apply_config():

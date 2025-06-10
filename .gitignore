@@ -21,8 +21,7 @@ build/
 venv/
 
 # Ignore YOLO model weights
-yolo11n.pt
-yolo11n-seg.pt
+*.pt
 
 # Java
 *.class

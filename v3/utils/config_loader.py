@@ -16,6 +16,7 @@ def load_config():
                 "point_size = 3\n\n"
                 "[Grading]\n"
                 "distance_threshold = 130\n"
+                "percentage_grading = 5.0\n"
                 "adj = 10\n\n"
                 "[Camera]\n"
                 "fps = 24\n"
